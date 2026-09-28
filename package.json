@@ -1,0 +1,35 @@
+{
+  "name": "timetable-planner",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "date-fns": "^4.4.0",
+    "lucide-react": "^1.48.0",
+    "react": "^19.2.8",
+    "react-calendar": "^6.0.1",
+    "react-dom": "^19.2.8",
+    "tailwindcss": "^4.3.3",
+    "uuid": "^14.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "gh-pages": "^6.3.0",
+    "oxlint": "^1.81.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0"
+  },
+  "homepage": "https://NiharikaJanaki.github.io/timetable-planner/"
+}

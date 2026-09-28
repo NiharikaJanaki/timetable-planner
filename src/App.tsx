@@ -113,9 +113,11 @@ function App() {
     setTasks(tasks.filter(t => t.id !== id));
   };
 
-  const selectedDateTasks = tasks.filter((t) =>
-    t.deadline ? isSameDay(parseISO(t.deadline), selectedDate) : false
-  );
+  const [viewMode, setViewMode] = useState<'daily' | 'all'>('daily');
+
+  const displayedTasks = viewMode === 'daily'
+    ? tasks.filter((t) => t.deadline && isSameDay(parseISO(t.deadline), selectedDate))
+    : tasks;
 
   // Function to highlight days with tasks on the calendar
   const tileContent = ({ date, view }: { date: Date; view: string }) => {
@@ -138,7 +140,10 @@ function App() {
             <h2 className="text-xl font-semibold">Calendar</h2>
           </div>
           <Calendar
-            onChange={(val) => setSelectedDate(val as Date)}
+            onChange={(val) => {
+              setSelectedDate(val as Date);
+              setViewMode('daily');
+            }}
             value={selectedDate}
             tileContent={tileContent}
             className="border-none w-full"
@@ -169,12 +174,26 @@ function App() {
       {/* Tasks Main Area */}
       <main className="w-full md:w-2/3 flex flex-col gap-6">
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-          <div className="flex justify-between items-end mb-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-6 gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Tasks</h1>
+              <h1 className="text-3xl font-bold text-gray-900">To-Do List</h1>
               <p className="text-gray-500 mt-1">
-                {format(selectedDate, 'EEEE, MMMM do, yyyy')}
+                {viewMode === 'daily' ? format(selectedDate, 'EEEE, MMMM do, yyyy') : 'All Scheduled Tasks'}
               </p>
+            </div>
+            <div className="flex bg-gray-100 p-1 rounded-lg self-start sm:self-auto">
+              <button
+                onClick={() => setViewMode('daily')}
+                className={`px-4 py-1.5 text-sm font-medium rounded-md transition ${viewMode === 'daily' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
+              >
+                Daily
+              </button>
+              <button
+                onClick={() => setViewMode('all')}
+                className={`px-4 py-1.5 text-sm font-medium rounded-md transition ${viewMode === 'all' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
+              >
+                All Tasks
+              </button>
             </div>
           </div>
 
@@ -210,12 +229,14 @@ function App() {
           </form>
 
           <div className="space-y-3">
-            {selectedDateTasks.length === 0 ? (
+            {displayedTasks.length === 0 ? (
               <div className="text-center py-12 px-4 border-2 border-dashed border-gray-200 rounded-2xl">
-                <p className="text-gray-500">No tasks for this day. Enjoy your free time!</p>
+                <p className="text-gray-500">
+                  {viewMode === 'daily' ? 'No tasks for this day. Enjoy your free time!' : 'Your to-do list is empty!'}
+                </p>
               </div>
             ) : (
-              selectedDateTasks.map((task) => (
+              displayedTasks.map((task) => (
                 <div
                   key={task.id}
                   className={`flex items-center justify-between p-4 rounded-xl border ${
@@ -243,6 +264,9 @@ function App() {
                       </h4>
                       {task.deadline && (
                         <p className="text-sm text-gray-500 flex items-center gap-1 mt-0.5">
+                          {viewMode === 'all' && <CalendarIcon className="w-3 h-3 mr-0.5" />}
+                          {viewMode === 'all' && format(parseISO(task.deadline), 'MMM d')}
+                          {viewMode === 'all' && <span className="mx-1">•</span>}
                           <Clock className="w-3 h-3" />
                           {format(parseISO(task.deadline), 'p')}
                         </p>
